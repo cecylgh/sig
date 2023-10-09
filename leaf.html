@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>A Leaflet map!</title>
+  <link rel="stylesheet" href="./Leaflet-1.0.3/leaflet.css"/>
+  <link rel="stylesheet" href="./Leaflet.markercluster-1.0.5/MarkerCluster.css"/>
+  <script src="./Leaflet-1.0.3/leaflet.js"></script>
+  <script src="./Leaflet.markercluster-1.0.5/leaflet.markercluster.js"></script>
+  <script src="./Leaflet.heat-0.2.0/leaflet-heat.js"></script>
+  <script src="jquery-2.1.1.min.js"></script>
+  <style>
+    #map{ height: 100% }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+
+  <script>
+    // initialize the map
+    var map = L.map('map').setView([42.35, -71.08], 13);
+
+    // load a tile layer
+    L.tileLayer('http://tiles.mapc.org/basemap/{z}/{x}/{y}.png', {
+      attribution: 'Tiles by <a href="http://mapc.org">MAPC</a>, Data by <a href="http://mass.gov/mgis">MassGIS</a>',
+      maxZoom: 17,
+      minZoom: 9
+    }).addTo(map);
+
+    $.getJSON("rodents.geojson", function(data){
+      var locations = data.features.map(function(rat) {
+        var location = rat.geometry.coordinates.reverse();
+        location.push(0.5);
+        return location;
+      });
+
+      var heat = L.heatLayer(locations, { radius: 35 });
+      map.addLayer(heat); 
+    });
+
+  </script>
+</body>
+</html>
